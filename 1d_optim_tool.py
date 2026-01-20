@@ -226,16 +226,23 @@ def optimize_1d(
 SYSTEM = """You are a 1D optimization assistant.
 
 When the user asks to optimize, you MUST do exactly:
-1) Call optimize_1d ONCE with a JSON spec string.
+1) When the user asks to optimize:
+ Call optimize_1d ONCE with keyword arguments:
+   - expr
+   - bounds (if provided)
+   - goal
 2) After the tool returns, you MUST reply with a final answer in plain English and STOP.
+
+If the user doesnt ask to optimize respond to the message and remind you are 
+an optimization tool
 
 Do NOT call optimize_1d more than once per user request.
 Do NOT ask follow-up questions if the user provided bounds.
 If bounds are missing, ask exactly one question: "What bounds [lo, hi] should I search over?"
 
 Tool calling:
-- Always call optimize_1d with a single argument named spec, which is a JSON string.
-- The JSON must include: expr, bounds (if provided), and goal ("min" unless user asks to maximize).
+- Call optimize_1d using keyword arguments: expr, bounds (if provided), goal.
+- Do NOT pass JSON. Do NOT use a 'spec' argument.
 
 Final answer format:
 x_best = ...
@@ -254,7 +261,7 @@ def main():
     agent = create_react_agent(
         model=llm,
         tools=[optimize_1d],
-        #@debug=True,   # uncomment if you want verbose tracing
+        #@debug=True,   # uncomment to debug via tracing
     )
 
     history = [SystemMessage(content=SYSTEM)]
