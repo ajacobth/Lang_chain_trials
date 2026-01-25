@@ -1,0 +1,8 @@
+{
+  "graphs": {
+    "main": "agent:graph"
+  },
+  "dependencies": [
+    "."
+  ]
+}
